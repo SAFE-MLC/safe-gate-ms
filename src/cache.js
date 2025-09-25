@@ -8,13 +8,13 @@ export async function getTicketFromCache(ticketId) {
   return v ? JSON.parse(v) : null;
 }
 
-export async function setTicketInCache(ticketId, doc, ttl = 120) {
+export async function setTicketInCache(ticketId, doc, ttl = 3600) {
   await redis.setex(`ticket:${ticketId}`, ttl, JSON.stringify(doc));
 }
 
 export async function markUsedOnce(ticketId) {
   // Anti-replay: éxito solo la primera vez (NX)
-  const nx = await redis.set(`used:${ticketId}`, '1', 'NX', 'EX', 300);
+  const nx = await redis.set(`used:${ticketId}`, '1', 'NX', 'EX', 3600);
   return nx !== null;
 }
 
